@@ -1,151 +1,172 @@
-class mission:
+class State():
+    def __init__(self, cannibalLeft, missionaryLeft, boat, cannibalRight, missionaryRight, action):
+        self.cannibalLeft = cannibalLeft
+        self.missionaryLeft = missionaryLeft
+        self.boat = boat
+        self.cannibalRight = cannibalRight
+        self.missionaryRight = missionaryRight
+        self.action = action
+        self.parent = None
 
-    def find_solution(self,state):                                                                 # find all possible states
-        if state[2]==0:
-            if state[0]>=2:                                                                        # move two cannibals to right side
-                j = (state[0] - 2, state[1], 1, state[3] + 2, state[4])
-                if not ((j[0] > j[1] and j[1] >= 1) or (j[3] > j[4] and j[4] >= 1)):
-                    if not visited_nodes.__contains__((state[0]-2,state[1],1,state[3]+2,state[4])):
-                        j=(state[0]-2,state[1],1,state[3]+2,state[4])
-                        visited_nodes.append((state[0]-2,state[1],1,state[3]+2,state[4]))
-                        graph[state].append([state[0]-2,state[1],1,state[3]+2,state[4]])
-                        graph[j]=[]
-                        parents[j]=state
-                        self.check_goal(j)
-
-
-            if state[1]>=2:
-                j = (state[0], state[1] - 2, 1, state[3], state[4] + 2)                           # move two missionaries to right side
-                if not ((j[0] > j[1] and j[1] >= 1) or (j[3] > j[4] and j[4] >= 1)):
-                    if not visited_nodes.__contains__((state[0],state[1]-2,1,state[3],state[4]+2)):
-                        j=(state[0],state[1]-2,1,state[3],state[4]+2)
-                        visited_nodes.append(j)
-                        graph[state].append([state[0],state[1]-2,1,state[3],state[4]+2])
-                        graph[j]=[]
-                        parents[j] = state
-                        self.check_goal(j)
-
-
-            if state[0]>0 and state[1]>0:                                              # move 1 missionary and 1 cannibal to right side
-                j = (state[0] - 1, state[1] - 1, 1, state[3] + 1, state[4] + 1)
-                if not ((j[0] > j[1] and j[1] >= 1) or (j[3] > j[4] and j[4] >= 1)):
-                    if not visited_nodes.__contains__((state[0]-1,state[1]-1,1,state[3]+1,state[4]+1)):
-                        j=(state[0]-1,state[1]-1,1,state[3]+1,state[4]+1)
-                        visited_nodes.append(j)
-                        graph[state].append([state[0]-1,state[1]-1,1,state[3]+1,state[4]+1])
-                        graph[j]=[]
-                        parents[j] = state
-                        self.check_goal(j)
-
-
-
+    def is_goal(self):
+        if self.cannibalLeft == 0 and self.missionaryLeft == 0:
+            return True
         else:
+            return False
 
-            if state[3]>=2:                                                                       # move two cannibals to left side
-                j = (state[0] + 2, state[1], 0, state[3] - 2, state[4])
-                if not ((j[0] > j[1] and j[1] >= 1) or (j[3] > j[4] and j[4] >= 1)):
-                    if not visited_nodes.__contains__((state[0] + 2, state[1], 0,state[3]-2,state[4])):
-                        j = (state[0] + 2, state[1], 0,state[3]-2,state[4])
-                        visited_nodes.append((state[0] + 2, state[1], 0,state[3]-2,state[4]))
-                        graph[state].append([state[0] + 2, state[1], 0,state[3]-2,state[4]])
-                        graph[j] = []
-                        parents[j] = state
-                        self.check_goal(j)
+    def is_valid(self):
+        if self.missionaryLeft >= 0 and self.missionaryRight >= 0 \
+                and self.cannibalLeft >= 0 and self.cannibalRight >= 0 \
+                and (self.missionaryLeft == 0 or self.missionaryLeft >= self.cannibalLeft) \
+                and (self.missionaryRight == 0 or self.missionaryRight >= self.cannibalRight):
+            return True
+        else:
+            return False
 
+    def __eq__(self, other):
+        return self.cannibalLeft == other.cannibalLeft and self.missionaryLeft == other.missionaryLeft \
+               and self.boat == other.boat and self.cannibalRight == other.cannibalRight \
+               and self.missionaryRight == other.missionaryRight
 
-            if state[4] >= 2:                                                                    # move two missionaries to left side
-                j = (state[0], state[1] + 2, 0, state[3], state[4] - 2)
-                if not ((j[0] > j[1] and j[1] >= 1) or (j[3] > j[4] and j[4] >= 1)):
-                    if not visited_nodes.__contains__((state[0], state[1] + 2, 0,state[3],state[4]-2)):
-                        j = (state[0], state[1] + 2, 0,state[3],state[4]-2)
-                        visited_nodes.append(j)
-                        graph[state].append([state[0], state[1] + 2, 0,state[3],state[4]-2])
-                        graph[j] = []
-                        parents[j] = state
-                        self.check_goal(j)
-
-            if state[3] > 0 and state[4] > 0:                                           # move 1 missionary and 1 cannibal to left side
-                j = (state[0] + 1, state[1] + 1, 0,state[3]-1,state[4]-1)
-                if not ((j[0] > j[1] and j[1] >= 1) or (j[3] > j[4] and j[4] >= 1)):
-                    if not visited_nodes.__contains__((state[0] + 1, state[1] + 1, 0,state[3]-1,state[4]-1)):
-                        j = (state[0] + 1, state[1] + 1, 0,state[3]-1,state[4]-1)
-                        visited_nodes.append(j)
-                        graph[state].append([state[0] + 1, state[1] + 1, 0,state[3]-1,state[4]-1])
-                        graph[j] = []
-                        parents[j] = state
-                        self.check_goal(j)
+    def __hash__(self):
+        return hash((self.cannibalLeft, self.missionaryLeft, self.boat, self.cannibalRight, self.missionaryRight))
 
 
-            if state[3]>0:
+def successors(cur_state):
+    children = list()
+    if cur_state.boat == 'left':
+        # send two missionaries from left to right
+        new_state = State(cur_state.cannibalLeft, cur_state.missionaryLeft - 2, 'right',
+                          cur_state.cannibalRight, cur_state.missionaryRight + 2,
+                          "send two missionaries from left to right")
+        if new_state.is_valid():
+            new_state.parent = cur_state
+            children.append(new_state)
 
-                j=(state[0]+1,state[1],0,state[3]-1,state[4])                                    # move 1 cannibal to left side
+        # send two cannibals from left to right
+        new_state = State(cur_state.cannibalLeft - 2, cur_state.missionaryLeft, 'right',
+                          cur_state.cannibalRight + 2, cur_state.missionaryRight,
+                          "send two cannibals from left to right")
+        if new_state.is_valid():
+            new_state.parent = cur_state
+            children.append(new_state)
 
-                if not ((j[0] > j[1] and j[1] >= 1) or (j[3] > j[4] and j[4] >= 1)):
-                    if not visited_nodes.__contains__((state[0]+1,state[1],0,state[3]-1,state[4])):
-                        j=(state[0]+1,state[1],0,state[3]-1,state[4])
-                        visited_nodes.append(j)
-                        graph[state].append([state[0]+1,state[1],0,state[3]-1,state[4]])
-                        graph[j]=[]
-                        parents[j] = state
-                        self.check_goal(j)
+        # send one missionary and one cannibal from left to right
+        new_state = State(cur_state.cannibalLeft - 1, cur_state.missionaryLeft - 1, 'right',
+                          cur_state.cannibalRight + 1, cur_state.missionaryRight + 1,
+                          "send one missionary and one cannibal from left to right")
+        if new_state.is_valid():
+            new_state.parent = cur_state
+            children.append(new_state)
+
+        # send one missionary from left to right
+        new_state = State(cur_state.cannibalLeft, cur_state.missionaryLeft - 1, 'right',
+                          cur_state.cannibalRight, cur_state.missionaryRight + 1,
+                          "send one missionary from left to right")
+        if new_state.is_valid():
+            new_state.parent = cur_state
+            children.append(new_state)
+
+        # send one cannibal from left to right
+        new_state = State(cur_state.cannibalLeft - 1, cur_state.missionaryLeft, 'right',
+                          cur_state.cannibalRight + 1, cur_state.missionaryRight,
+                          "send one cannibal from left to right")
+        if new_state.is_valid():
+            new_state.parent = cur_state
+            children.append(new_state)
+    else:
+        # send two missionaries from right to left
+        new_state = State(cur_state.cannibalLeft, cur_state.missionaryLeft + 2, 'left',
+                          cur_state.cannibalRight, cur_state.missionaryRight - 2,
+                          "send two missionaries from right to left")
+        if new_state.is_valid():
+            new_state.parent = cur_state
+            children.append(new_state)
+
+        # send two cannibals from right to left
+        new_state = State(cur_state.cannibalLeft + 2, cur_state.missionaryLeft, 'left',
+                          cur_state.cannibalRight - 2, cur_state.missionaryRight,
+                          "send two cannibals from right to left")
+        if new_state.is_valid():
+            new_state.parent = cur_state
+            children.append(new_state)
+
+        # send one missionary and one cannibal from right to left
+        new_state = State(cur_state.cannibalLeft + 1, cur_state.missionaryLeft + 1, 'left',
+                          cur_state.cannibalRight - 1, cur_state.missionaryRight - 1,
+                          "send one missionary and one cannibal from right to left")
+        if new_state.is_valid():
+            new_state.parent = cur_state
+            children.append(new_state)
+
+        # send one missionary from right to left
+        new_state = State(cur_state.cannibalLeft, cur_state.missionaryLeft + 1, 'left',
+                          cur_state.cannibalRight, cur_state.missionaryRight - 1,
+                          "send one missionary from right to left")
+        if new_state.is_valid():
+            new_state.parent = cur_state
+            children.append(new_state)
+
+        # send one cannibal from right to left
+        new_state = State(cur_state.cannibalLeft + 1, cur_state.missionaryLeft, 'left',
+                          cur_state.cannibalRight - 1, cur_state.missionaryRight,
+                          "send one cannibal from right to left")
+        if new_state.is_valid():
+            new_state.parent = cur_state
+            children.append(new_state)
+
+    return children
 
 
-
-            if state[4]>0:                                                                         # move 1 missionary to left side
-
-                j=(state[0],state[1]+1,0,state[3],state[4]-1)
-                if not ((j[0] > j[1] and j[1] >= 1) or (j[3] > j[4] and j[4] >= 1)):
-                    if not visited_nodes.__contains__((state[0],state[1]+1,0,state[3],state[4]-1)):
-                        j=(state[0],state[1]+1,0,state[3],state[4]-1)
-                        visited_nodes.append(j)
-                        graph[state].append([state[0],state[1]+1,0,state[3],state[4]-1])
-                        graph[j]=[]
-                        parents[j] = state
-                        self.check_goal(j)
-
-
-        i = visited_nodes.index(state)
-        k = visited_nodes[i + 1]
-        self.find_solution(k)
+def depth_limited_search(node, depth):
+    if node.is_goal():
+        return node
+    elif depth == 0:
+        return None
+    else:
+        children = successors(node)
+        for child in children:
+            result = depth_limited_search(child, depth - 1)
+            if result:
+                return result
+        return None
 
 
-
-    def check_goal(self,state):
-        if state==goal_state:
-            self.parent(state)
-
-    def parent(self,j):
-
-        while j!=start_state:
-            path.append(j)
-            self.parent(parents[j])
-        path.append(start_state)
-
-        for n in range(len(path)-1,0,-1):
-            print(path[n])
-        print(path[0])
-        print("Graph: ", graph)
-        exit(0)
+def iterative_deepening_depth_first_search(root, max_depth):
+    for i in range(max_depth):
+        return depth_limited_search(root, max_depth)
 
 
+def print_solution(solution):
+    path = list()
+    path.append(solution)
+    parent = solution.parent
 
-m=mission()
-graph={}
-parents={}
-path=[]
-print("setting missionaries and cannibals...")
-temp=int(input("Enter the number of missionaries or cannibels: "))
-while not temp>0:
-    temp=int(input("Enter the number of missionaries or cannibels, they should be equal in numbers!"))
+    while parent:
+        path.append(parent)
+        parent = parent.parent
 
-start_state=(temp,temp,0,0,0)
-visited_nodes=[]
-bank=start_state[2]
-print("setting goal state...")
-print()
-print("Solution:")
-print("Cannibals Missionaries River_Bank Cannibals Missionaries")
-goal_state=(0,0,1,temp,temp)
-visited_nodes.append(start_state)
-graph[start_state]=[]
-m.find_solution(start_state)
+    print("initial state: <3,3,left,0,0>")
+    for i in range(1, len(path)):
+        state = path[len(path) - i - 1]
+        print "action" + str(i) + ": " + state.action
+        if i == len(path) - 1:
+            print "goal state" + str(i) + ": <" + str(state.cannibalLeft) + "," + str(state.missionaryLeft) \
+                  + "," + state.boat + "," + str(state.cannibalRight) + "," + \
+                  str(state.missionaryRight) + ">"
+        else:
+            print "state" + str(i) + ": <" + str(state.cannibalLeft) + "," + str(state.missionaryLeft) \
+                  + "," + state.boat + "," + str(state.cannibalRight) + "," + \
+                  str(state.missionaryRight) + ">"
+
+
+def main():
+    initial_state = State(3, 3, 'left', 0, 0, "no action yet")
+    solution = iterative_deepening_depth_first_search(initial_state, 11)
+    print("Format: <cannibal left,missionary left,boat position,cannibal right,missionary right>")
+    print_solution(solution)
+
+
+# if called from the command line, call main()
+if __name__ == "__main__":
+    main()
